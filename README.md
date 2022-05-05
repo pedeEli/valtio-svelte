@@ -1,38 +1,62 @@
-# create-svelte
+# Valtio Svelte
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Combines the power of valtio and svelte stores.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+# Usage
 
 ```bash
-# create a new project in the current directory
-npm init svelte
-
-# create a new project in my-app
-npm init svelte my-app
+npm install -D valtio-svelte
 ```
 
-## Developing
+Create a proxy store
+```js
+import {proxy} from 'valtio-svelte'
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+const person = proxy({
+    name: 'elias',
+    age: 20,
+    hobbys: ['svelte', 'valtio']
+})
 ```
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
+Now you can just use the $ syntax from svelte to listen to changes
+```svelte
+<button on:click={() => person.age++}>Increment Age</button>
+<p>Name: {person.name}</p>
+<p>Age: {$person.age}</p>
 ```
 
-You can preview the production build with `npm run preview`.
+You can also create readable stores for single keys
+```js
+const hobbys = person.$key('hobbys')
+```
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Now, if you have
+```svelte
+<script>
+    import {proxy} from 'valtio-svelte'
+    const person = proxy({
+        name: 'elias',
+        age: 20,
+        hobbys: ['svelte', 'valtio']
+    })
+
+    let value = ''
+    const handleKey = (event) => {
+        if (event.key !== 'Enter')
+            return
+        person.hobbys.push(value)
+        value = ''
+    }
+
+    const name = person.$key('name')
+    const age = person.$key('age')
+    const hobbys = person.$key('hobbys')
+</script>
+
+<input bind:value on:keydown={handleKey}>
+<p>Name: {$name}</p>
+<p>Age: {$age}</p>
+<p>Hobbys: {$hobbys.join(', ')}</p>
+```
+and you add a hobby only the last paragraph is redrawn
