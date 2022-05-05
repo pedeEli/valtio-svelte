@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-auto';
 import preprocess from 'svelte-preprocess';
+import path from 'path'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,7 +9,20 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+
+		package: {
+			files: file => !file.startsWith('demo'),
+			exports: file => file === 'index.ts'
+		},
+
+		vite: {
+			resolve: {
+				alias: {
+					'valtio-svelte': path.resolve('src/lib/index.ts')
+				}
+			}
+		}
 	}
 };
 

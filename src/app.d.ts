@@ -8,3 +8,9 @@ declare namespace App {
 	// interface Session {}
 	// interface Stuff {}
 }
+
+declare type Person = import('valtio-svelte').Proxify<{
+	name: string,
+	age: number,
+	hobbys: string[]
+}>
