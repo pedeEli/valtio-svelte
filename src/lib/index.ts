@@ -37,6 +37,15 @@ const addStoreMethods = <T extends object>(obj: Proxify<T>, original: T) => {
         const value = obj[key as keyof T]
         if (typeof value !== 'object')
             return
-        addStoreMethods(value as any)
+        addStoreMethods(value as any, original)
     })
+}
+
+export const keys = <T extends object>(obj: Proxify<T>) => {
+    return Object.keys(obj).filter(key => key !== 'subscribe' && key !== '$key') as Array<keyof T>
+}
+
+export const values = <T extends object>(obj: Proxify<T>) => {
+    const ks = keys(obj)
+    return ks.map(k => obj[k]) as Array<T[keyof T]>
 }

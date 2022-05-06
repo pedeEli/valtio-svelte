@@ -1,6 +1,6 @@
 <script lang="ts">
     import {setContext} from 'svelte'
-    import {proxy} from 'valtio-svelte'
+    import {keys, proxy, values} from 'valtio-svelte'
     import Child from '$lib/demo/Child.svelte'
 
     const person: Person = proxy({
@@ -9,6 +9,10 @@
         hobbys: [],
         subscribe: 'test'
     })
+
+    const vs = values(person)
+    const ks = keys(person)
+    console.log({vs, ks})
 
     let hobby = ''
     const addHobby = () => {
