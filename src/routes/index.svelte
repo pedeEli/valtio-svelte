@@ -6,7 +6,8 @@
     const person: Person = proxy({
         name: 'Elias Gerster',
         age: 20,
-        hobbys: []
+        hobbys: [],
+        subscribe: 'test'
     })
 
     let hobby = ''

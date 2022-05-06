@@ -12,15 +12,19 @@ export type Proxify<T extends object> = {
 
 export const proxy = <T extends object>(obj: T): Proxify<T> => {
     const p = valtioProxy(obj)
-    addStoreMethods(p as any)
+    addStoreMethods(p as any, obj)
     return p as any
 }
 
-const addStoreMethods = <T extends object>(obj: Proxify<T>) => {
+const addStoreMethods = <T extends object>(obj: Proxify<T>, original: T) => {
+    if (obj.subscribe !== undefined)
+        console.warn('subscribe property of object is being overwritten\n', original)
     obj.subscribe = (run: Subscriber<T>) => {
         run(snapshot(obj) as T)
         return subscribe(obj, () => run(snapshot(obj) as T))
     }
+    if (obj.$key !== undefined)
+        console.warn('$key property of object is being overwritten\n', original)
     obj.$key = (key) => ({
         subscribe: (run: Subscriber<T[typeof key]>) => {
             run((snapshot(obj) as T)[key])
